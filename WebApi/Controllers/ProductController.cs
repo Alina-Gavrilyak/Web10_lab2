@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using DataAccessServices.Services;
+using Contracts.Repositories;
+using Contracts.Models;
 
 namespace WebApi.Controllers
 {
@@ -13,60 +15,47 @@ namespace WebApi.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly ProductService service;
+        private readonly IProductRepository repository;
 
-        public ProductController(ProductService service)
+        public ProductController(IProductRepository repository)
         {
-            this.service = service;
+            this.repository = repository;
         }
 
         [HttpGet]
-        public IEnumerable<Product> GetAllProducts()
+        public IEnumerable<ProductDTO> GetAllProducts()
         {
-            return service.GetAll();
+            return repository.GetAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Product> GetProduct(int id)
-        {
-            Product item = service.Get(id);
-            if (item == null)
-            {
+        public ActionResult<ProductDTO> GetProduct(int id) {
+            ProductDTO item = repository.Get(id);
+            if (item == null) {
                 return NotFound();
             }
             return item;
         }
+
         [HttpPost]
-        public Product PostProduct(Product item)
-        {
-            item = service.Add(item);
-            return item;
+        public int PostProduct(ProductInputDTO item) {
+            return repository.Add(item);
         }
+
         [HttpPut("{id}")]
-        public IActionResult PutProduct(int id, Product product)
-        {
-            //return BadRequest();
-
-            product.Id = id;
-            if (!service.Update(product))
-            {
+        public IActionResult PutProduct(int id, ProductInputDTO product) {
+            if (!repository.Update(id, product)) {
                 return NotFound();
             }
-
             return Ok();
         }
+
         [HttpDelete("{id}")]
-        public IActionResult DeleteProduct(int id)
-        {
-            Product item = service.Get(id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-            service.Remove(id);
-
-            return Ok();
+        public IActionResult DeleteProduct(int id) {
+            if (repository.Remove(id))
+                return Ok();
+            else
+                return BadRequest();
         }
     }
 }

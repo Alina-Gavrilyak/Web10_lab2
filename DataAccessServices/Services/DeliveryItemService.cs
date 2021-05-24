@@ -1,6 +1,7 @@
 ﻿using DataAccessContracts.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,6 +17,12 @@ namespace DataAccessServices.Services
         {
             this.repository = repository;
             CreateDefaultData();
+
+            string connectionString = "Server=(localdb)\\mssqllocaldb;Database=master;Trusted_Connection=True;";
+
+            // Создание подключения
+            SqlConnection connection = new SqlConnection(connectionString);
+
         }
 
         public void CreateDefaultData()

@@ -1,49 +1,73 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="DataAccessContracts.Entities.DeliveryItem" Collapsed="true">
-    <Position X="6" Y="1" Width="1.5" />
+  <Class Name="DataAccessContracts.Entities.DeliveryItem">
+    <Position X="8.5" Y="1.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>EAACAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>Entities\DeliveryItem.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="RequestDelivery" />
+      <Property Name="Product" />
+    </ShowAsAssociation>
   </Class>
-  <Class Name="DataAccessContracts.Entities.Product" Collapsed="true">
-    <Position X="7.75" Y="1" Width="1.5" />
+  <Class Name="DataAccessContracts.Entities.Product">
+    <Position X="5.5" Y="1" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAQAAAAAAAEAAAAQAAAAAAAAAAAAAAAAACAA=</HashCode>
       <FileName>Entities\Product.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataAccessContracts.Entities.ProductShop" Collapsed="true">
-    <Position X="9.5" Y="1" Width="1.5" />
+  <Class Name="DataAccessContracts.Entities.ProductShop">
+    <Position X="11.5" Y="1.75" Width="1.5" />
+    <AssociationLine Name="Product" Type="DataAccessContracts.Entities.Product" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="12.188" Y="1.75" />
+        <Point X="12.188" Y="0.625" />
+        <Point X="6.312" Y="0.625" />
+        <Point X="6.312" Y="1" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>UAACAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\ProductShop.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Product" />
+      <Property Name="Shop" />
+    </ShowAsAssociation>
   </Class>
-  <Class Name="DataAccessContracts.Entities.ProductWarehouse" Collapsed="true">
-    <Position X="6" Y="2" Width="1.5" />
+  <Class Name="DataAccessContracts.Entities.ProductWarehouse">
+    <Position X="2.5" Y="2.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>EAACAAAABAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
       <FileName>Entities\ProductWarehouse.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Product" />
+      <Property Name="Warehouse" />
+    </ShowAsAssociation>
   </Class>
-  <Class Name="DataAccessContracts.Entities.RequestDelivery" Collapsed="true">
-    <Position X="7.75" Y="2" Width="1.5" />
+  <Class Name="DataAccessContracts.Entities.RequestDelivery">
+    <Position X="8.5" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAACAAAABAAAAAAAAEAAAAAAAACAAAAACAAAAAAAAAA=</HashCode>
       <FileName>Entities\RequestDelivery.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Shop" />
+      <Property Name="Warehouse" />
+    </ShowAsAssociation>
   </Class>
-  <Class Name="DataAccessContracts.Entities.Shop" Collapsed="true">
-    <Position X="9.5" Y="2" Width="1.5" />
+  <Class Name="DataAccessContracts.Entities.Shop">
+    <Position X="11.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Entities\Shop.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataAccessContracts.Entities.Warehouse" Collapsed="true">
-    <Position X="6" Y="3" Width="1.5" />
+  <Class Name="DataAccessContracts.Entities.Warehouse">
+    <Position X="5.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAEAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Entities\Warehouse.cs</FileName>

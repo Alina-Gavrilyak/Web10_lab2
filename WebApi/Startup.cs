@@ -1,3 +1,5 @@
+using AutoMapper;
+using Contracts.Repositories;
 using DataAccessServices;
 using DataAccessServices.Services;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Services.Mapper;
+using Services.Repositories;
+using Services.Repositories.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +33,21 @@ namespace Web10_Lab2
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var mapperConfig = new MapperConfiguration(mc => {
+                mc.AddProfile(new ProductMappingProfile());
+                mc.AddProfile(new RequestDeliveryMappingProfile());
+                mc.AddProfile(new ShopMappingProfile());
+                mc.AddProfile(new WarehouseMappingProfile());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            //Temp
             services.AddSingleton<TurnoverRepository>();
+
+            services.AddOptions<RepositoryOptions>().Configure(opt => opt.ConnectionString = Configuration.GetConnectionString("DefaultConnection"));
+            services.AddSingleton<IProductRepository, ProductRepository>();
+
             services.AddScoped<ProductService>();
             services.AddScoped<WarehouseService>();
             services.AddScoped<ShopService>();

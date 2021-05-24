@@ -22,9 +22,9 @@ namespace DataAccessServices.Services
         {
             if (repository.Products.Count > 0)
                 return;
-            Add(new Product { Number = 1, Name = "Tomato soup", Category = "Groceries", Price = 1.39M });
-            Add(new Product { Number = 2, Name = "Yo-yo", Category = "Toys", Price = 3.75M });
-            Add(new Product { Number = 3, Name = "Hammer", Category = "Hardware", Price = 16.99M });
+            Add(new Product { Number = 1, Name = "Tomato soup", Category = "Groceries", Price = 1.39 });
+            Add(new Product { Number = 2, Name = "Yo-yo", Category = "Toys", Price = 3.75 });
+            Add(new Product { Number = 3, Name = "Hammer", Category = "Hardware", Price = 16.99 });
         }
 
         public IEnumerable<Product> GetAll()
