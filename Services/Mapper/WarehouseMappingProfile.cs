@@ -11,6 +11,7 @@ namespace Services.Mapper {
     public class WarehouseMappingProfile : Profile {
         public WarehouseMappingProfile() {
             CreateMap<Warehouse, WarehouseDTO>();
+            CreateMap<WarehouseInputDTO, Warehouse>();
         }
     }
 }

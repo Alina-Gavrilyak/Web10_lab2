@@ -1,7 +1,5 @@
 using AutoMapper;
 using Contracts.Repositories;
-using DataAccessServices;
-using DataAccessServices.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -42,19 +40,11 @@ namespace Web10_Lab2
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
 
-            //Temp
-            services.AddSingleton<TurnoverRepository>();
-
             services.AddOptions<RepositoryOptions>().Configure(opt => opt.ConnectionString = Configuration.GetConnectionString("DefaultConnection"));
             services.AddSingleton<IProductRepository, ProductRepository>();
-
-            services.AddScoped<ProductService>();
-            services.AddScoped<WarehouseService>();
-            services.AddScoped<ShopService>();
-            services.AddScoped<RequestDeliveryService>();
-            services.AddScoped<ProductShopService>();
-            services.AddScoped<ProductWarehouseService>();
-            services.AddScoped<DeliveryItemService>();
+            services.AddSingleton<IRequestDeliveryRepository, RequestDeliveryRepository>();
+            services.AddSingleton<IShopRepository, ShopRepository>();
+            services.AddSingleton<IWarehouseRepository, WarehouseRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

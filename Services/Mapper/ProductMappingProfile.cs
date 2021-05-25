@@ -11,7 +11,6 @@ namespace Services.Mapper {
     public class ProductMappingProfile : Profile {
         public ProductMappingProfile() {
             CreateMap<Product, ProductDTO>();
-
             CreateMap<ProductInputDTO, Product>();
         }
     }

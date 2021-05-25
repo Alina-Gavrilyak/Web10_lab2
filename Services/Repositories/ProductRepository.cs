@@ -22,19 +22,39 @@ namespace Services.Repositories {
 
         public IEnumerable<ProductDTO> GetAll() {
             using IDbConnection db = new SqlConnection(connectionString);
-            const string query = "SELECT * FROM Products";
-            return mapper.Map<IEnumerable<ProductDTO>>(db.Query<Product>(query));
+
+            const string productQuery = "SELECT * FROM Products";
+            IEnumerable<ProductDTO> products = mapper.Map<IEnumerable<ProductDTO>>(db.Query<Product>(productQuery));
+
+            foreach (ProductDTO product in products)
+                LoadReferences(db, product);
+
+            return products;
         }
 
         public ProductDTO Get(int id) {
             using IDbConnection db = new SqlConnection(connectionString);
+
             const string query = "SELECT * FROM Products WHERE Id = @Id";
-            var parameters = new DynamicParameters();
-            parameters.Add("Id", id, DbType.Int32);
-            return mapper.Map<ProductDTO>(db.QueryFirstOrDefault<Product>(query, parameters));
+            ProductDTO product = mapper.Map<ProductDTO>(db.QueryFirstOrDefault<Product>(query, new { Id = id }));
+
+            LoadReferences(db, product);
+
+            return product;
         }
 
-        public int Add(ProductInputDTO entity) {
+        private void LoadReferences(IDbConnection db, ProductDTO product) {
+            const string shopQuery = "SELECT s.* FROM Shops as s INNER JOIN ProductShops as ps ON s.Id = ps.ShopId WHERE ps.ProductId = @Id";
+            product.Shops = mapper.Map<List<ShopDTO>>(db.Query<Shop>(shopQuery, product));
+
+            const string warehouseDTOQuery = "SELECT w.* FROM Warehouses as w INNER JOIN ProductWarehouses as pw ON w.Id = pw.WarehouseId WHERE pw.ProductId = @Id";
+            product.Warehouses = mapper.Map<List<WarehouseDTO>>(db.Query<Warehouse>(warehouseDTOQuery, product));
+
+            const string requestDeliveriesQuery = "SELECT rd.* FROM RequestDeliverys as rd INNER JOIN DeliveryItems as di ON rd.Id = di.RequestDeliveryId WHERE di.ProductId = @Id";
+            product.RequestDeliveries = mapper.Map<List<RequestDeliveryDTO>>(db.Query<RequestDelivery>(requestDeliveriesQuery, product));
+        }
+
+        public int Add(ProductInputDTO inputEntity) {
 
             using IDbConnection connection = new SqlConnection(connectionString);
             connection.Open();
@@ -42,11 +62,10 @@ namespace Services.Repositories {
 
             try {
                 var insertProductQuery = "INSERT INTO Products (Number, Name, Category, Price) VALUES (@Number, @Name, @Category, @Price); SELECT SCOPE_IDENTITY()";
-                Product product = mapper.Map<Product>(entity);
-                var createdProductId = connection.ExecuteScalar<int>(insertProductQuery, product, transaction);
+                var createdProductId = connection.ExecuteScalar<int>(insertProductQuery, inputEntity, transaction);
 
-                AddProductShops(connection, transaction, createdProductId, entity.ShopIds);
-                AddProductWarehouses(connection, transaction, createdProductId, entity.WarehouseIds);
+                AddProductShops(connection, transaction, createdProductId, inputEntity.ShopIds);
+                AddProductWarehouses(connection, transaction, createdProductId, inputEntity.WarehouseIds);
 
                 transaction.Commit();
 
@@ -57,24 +76,24 @@ namespace Services.Repositories {
             }
         }
 
-        public bool Update(int id, ProductInputDTO entity) {
+        public bool Update(int id, ProductInputDTO inputEntity) {
             using IDbConnection connection = new SqlConnection(connectionString);
             connection.Open();
             using IDbTransaction transaction = connection.BeginTransaction();
 
             try {
                 var updateProductQuery = "Update Products SET Number = @Number, Name = @Name, Category = @Category, Price = @Price WHERE Id = @Id";
-                Product product = mapper.Map<Product>(entity);
+                Product product = mapper.Map<Product>(inputEntity);
                 product.Id = id;
                 var result = connection.Execute(updateProductQuery, product, transaction) == 1;
 
                 var deleteProductShopsQuery = "DELETE FROM ProductShops WHERE ProductId = @Id";
                 connection.Execute(deleteProductShopsQuery, product, transaction);
-                AddProductShops(connection, transaction, id, entity.ShopIds);
+                AddProductShops(connection, transaction, id, inputEntity.ShopIds);
 
                 var deleteProductWarehousesQuery = "DELETE FROM ProductWarehouses WHERE ProductId = @Id";
                 connection.Execute(deleteProductWarehousesQuery, product, transaction);
-                AddProductWarehouses(connection, transaction, id, entity.WarehouseIds);
+                AddProductWarehouses(connection, transaction, id, inputEntity.WarehouseIds);
 
                 transaction.Commit();
 
@@ -108,9 +127,7 @@ namespace Services.Repositories {
         public bool Remove(int id) {
             using IDbConnection db = new SqlConnection(connectionString);
             var query = "DELETE FROM Products WHERE Id = @Id";
-            var parameters = new DynamicParameters();
-            parameters.Add("Id", id, DbType.Int32);
-            return db.Execute(query, parameters) == 1;
+            return db.Execute(query, new { Id = id }) == 1;
         }
     }
 }

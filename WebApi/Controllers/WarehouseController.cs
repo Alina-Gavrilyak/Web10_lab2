@@ -1,71 +1,56 @@
-﻿using DataAccessContracts.Entities;
+﻿using Contracts.Models;
+using Contracts.Repositories;
+using DataAccessContracts.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using DataAccessServices.Services;
 
-namespace WebApi.Controllers
-{
+namespace WebApi.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class WarehouseController : ControllerBase
-    {
-        private readonly WarehouseService service;
+    public class WarehouseController : ControllerBase {
+        private readonly IWarehouseRepository repository;
 
-        public WarehouseController(WarehouseService service)
-        {
-            this.service = service;
+        public WarehouseController(IWarehouseRepository repository) {
+            this.repository = repository;
         }
 
         [HttpGet]
-        public IEnumerable<Warehouse> GetAllWarehouses()
-        {
-            return service.GetAll();
+        public IEnumerable<WarehouseDTO> GetAllWarehouses() {
+            return repository.GetAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Warehouse> GetWarehouse(int id)
-        {
-            Warehouse item = service.Get(id);
-            if (item == null)
-            {
+        public ActionResult<WarehouseDTO> GetWarehouse(int id) {
+            WarehouseDTO item = repository.Get(id);
+            if (item == null) {
                 return NotFound();
             }
             return item;
         }
+
         [HttpPost]
-        public Warehouse PostWarehouse(Warehouse item)
-        {
-            item = service.Add(item);
-            return item;
+        public int PostWarehouse(WarehouseInputDTO item) {
+            return repository.Add(item);
         }
+
         [HttpPut("{id}")]
-        public IActionResult PutWarehouse(int id, Warehouse warehouse)
-        {
-            //return BadRequest();
-
-            warehouse.Id = id;
-            if (!service.Update(warehouse))
-            {
+        public IActionResult PutWarehouse(int id, WarehouseInputDTO warehouse) {
+            if (!repository.Update(id, warehouse)) {
                 return NotFound();
             }
-
             return Ok();
         }
-        [HttpDelete("{id}")]
-        public IActionResult DeleteWarehouse(int id)
-        {
-            Warehouse item = service.Get(id);
-            if (item == null)
-            {
-                return NotFound();
-            }
 
-            service.Remove(id);
-            return Ok();
+        [HttpDelete("{id}")]
+        public IActionResult DeleteWarehouse(int id) {
+            if (repository.Remove(id))
+                return Ok();
+            else
+                return BadRequest();
         }
     }
 }

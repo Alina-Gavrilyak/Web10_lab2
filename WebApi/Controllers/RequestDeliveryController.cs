@@ -5,68 +5,52 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DataAccessServices.Services;
+using Contracts.Repositories;
+using Contracts.Models;
 
-namespace WebApi.Controllers
-{
+namespace WebApi.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class RequestDeliveryController : ControllerBase
-    {
-        private readonly RequestDeliveryService service;
+    public class RequestDeliveryController : ControllerBase {
+        private readonly IRequestDeliveryRepository repository;
 
-        public RequestDeliveryController(RequestDeliveryService service)
-        {
-            this.service = service;
+        public RequestDeliveryController(IRequestDeliveryRepository repository) {
+            this.repository = repository;
         }
 
         [HttpGet]
-        public IEnumerable<RequestDelivery> GetAllRequestDeliverys()
-        {
-            return service.GetAll();
+        public IEnumerable<RequestDeliveryDTO> GetAllRequestDeliverys() {
+            return repository.GetAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<RequestDelivery> GetRequestDelivery(int id)
-        {
-            RequestDelivery item = service.Get(id);
-            if (item == null)
-            {
+        public ActionResult<RequestDeliveryDTO> GetRequestDelivery(int id) {
+            RequestDeliveryDTO item = repository.Get(id);
+            if (item == null) {
                 return NotFound();
             }
             return item;
         }
+
         [HttpPost]
-        public RequestDelivery PostRequestDelivery(RequestDelivery item)
-        {
-            item = service.Add(item);
-            return item;
+        public int PostRequestDelivery(RequestDeliveryInputDTO item) {
+            return repository.Add(item);
         }
+
         [HttpPut("{id}")]
-        public IActionResult PutRequestDelivery(int id, RequestDelivery requestDelivery)
-        {
-            //return BadRequest();
-
-            requestDelivery.Id = id;
-            if (!service.Update(requestDelivery))
-            {
+        public IActionResult PutRequestDelivery(int id, RequestDeliveryInputDTO requestDelivery) {
+            if (!repository.Update(id, requestDelivery)) {
                 return NotFound();
             }
-
             return Ok();
         }
+
         [HttpDelete("{id}")]
-        public IActionResult DeleteRequestDelivery(int id)
-        {
-            RequestDelivery item = service.Get(id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-
-            service.Remove(id);
-
-            return Ok();
+        public IActionResult DeleteRequestDelivery(int id) {
+            if (repository.Remove(id))
+                return Ok();
+            else
+                return BadRequest();
         }
     }
 }

@@ -8,8 +8,8 @@ namespace Contracts.Repositories {
     public interface IRepository<TEntity, TInputEntity, TKey> {
         public IEnumerable<TEntity> GetAll();
         public TEntity Get(TKey id);
-        public TKey Add(TInputEntity entity);
-        public bool Update(TKey id, TInputEntity entity);
+        public TKey Add(TInputEntity inputEntity);
+        public bool Update(TKey id, TInputEntity inputEntity);
         public bool Remove(TKey id);
     }
 }

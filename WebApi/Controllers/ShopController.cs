@@ -5,67 +5,53 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DataAccessServices.Services;
+using Contracts.Repositories;
+using Contracts.Models;
 
-namespace WebApi.Controllers
-{
+namespace WebApi.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class ShopController : ControllerBase
-    {
-        private readonly ShopService service;
+    public class ShopController : ControllerBase {
+        private readonly IShopRepository repository;
 
-        public ShopController(ShopService service)
-        {
-            this.service = service;
+        public ShopController(IShopRepository repository) {
+            this.repository = repository;
         }
 
         [HttpGet]
-        public IEnumerable<Shop> GetAllShops()
-        {
-            return service.GetAll();
+        public IEnumerable<ShopDTO> GetAllShops() {
+            return repository.GetAll();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Shop> GetShop(int id)
-        {
-            Shop item = service.Get(id);
-            if (item == null)
-            {
+        public ActionResult<ShopDTO> GetShop(int id) {
+            ShopDTO item = repository.Get(id);
+            if (item == null) {
                 return NotFound();
             }
             return item;
         }
+
         [HttpPost]
-        public Shop PostShop(Shop item)
-        {
-            item = service.Add(item);
-            return item;
+        public int PostShop(ShopInputDTO item) {
+            return repository.Add(item);
         }
+
         [HttpPut("{id}")]
-        public IActionResult PutShop(int id, Shop shop)
-        {
-            //return BadRequest();
-
-            shop.Id = id;
-            if (!service.Update(shop))
-            {
+        public IActionResult PutShop(int id, ShopInputDTO shop) {
+            if (!repository.Update(id, shop)) {
                 return NotFound();
             }
 
             return Ok();
         }
-        [HttpDelete("{id}")]
-        public IActionResult DeleteShop(int id)
-        {
-            Shop item = service.Get(id);
-            if (item == null)
-            {
-                return NotFound();
-            }
 
-            service.Remove(id);
-            return Ok();
+        [HttpDelete("{id}")]
+        public IActionResult DeleteShop(int id) {
+            if (repository.Remove(id))
+                return Ok();
+            else
+                return BadRequest();
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Services.Mapper {
     public class RequestDeliveryMappingProfile : Profile {
         public RequestDeliveryMappingProfile() {
             CreateMap<RequestDelivery, RequestDeliveryDTO>();
+            CreateMap<RequestDeliveryInputDTO, RequestDelivery>();
         }
     }
 }
