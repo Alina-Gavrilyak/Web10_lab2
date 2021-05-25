@@ -114,7 +114,7 @@ namespace Services.Repositories {
 
         public bool Remove(int id) {
             using IDbConnection db = new SqlConnection(connectionString);
-            var query = "DELETE FROM Products WHERE Id = @Id";
+            var query = "DELETE FROM RequestDeliverys WHERE Id = @Id";
             return db.Execute(query, new { Id = id }) == 1;
         }
     }
